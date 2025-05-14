@@ -199,3 +199,33 @@ type Result struct {
     attempted      int
 }
 ```
+
+## References
+
+### Dependency Injection
+
+- [Dependency Injection in Go by Anthony GG](https://youtu.be/UX4XjxWcDB4?si=8e8eGfqnepikNQ9E) - Comprehensive explanation of dependency injection patterns in Go
+- [Go Dependency Injection with Wire](https://blog.drewolson.org/go-dependency-injection-with-wire) - Using Google's Wire for dependency injection
+- [Uber's Dig](https://github.com/uber-go/dig) - A reflection-based dependency injection toolkit
+
+### Mocking in Go
+
+- [Mocking Techniques for Go](https://www.myhatchpad.com/insight/mocking-techniques-for-go/) - Different approaches to mocking in Go tests
+- [Testify - Popular testing toolkit](https://github.com/stretchr/testify) - Includes a mocking framework
+- [gomock - Google's mocking framework](https://github.com/golang/mock) - Official Google mocking framework
+
+### Concurrency in Go
+
+- [Go Concurrency Patterns](https://blog.golang.org/concurrency-patterns) - Official Go blog on concurrency patterns
+- [Concurrency in Go by Katherine Cox-Buday](https://www.oreilly.com/library/view/concurrency-in-go/9781491941294/) - Comprehensive book on Go concurrency
+- [Go by Example: Channels](https://gobyexample.com/channels) - Practical examples of channel usage
+
+### Testing in Go
+
+- [Go Testing by Example](https://gobyexample.com/testing) - Simple examples of Go testing
+- [Advanced Testing in Go](https://www.youtube.com/watch?v=yszygk1cpEc) - Conference talk on advanced testing techniques
+- [Learn Go with Tests](https://github.com/quii/learn-go-with-tests) - Learning Go through test-driven development
+
+### Project Inspiration
+
+- [Gophercises - Quiz Game](https://courses.calhoun.io/lessons/les_goph_01) - Original problem statement and exercise
