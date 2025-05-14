@@ -1,116 +1,120 @@
 package utils
 
 import (
-	"log"
 	"testing"
 )
 
-// Valid mock dependencies
-type ValidMockQuizDeps struct{}
+// MockQuizDeps implements QuizDependencies interface for testing
+type MockQuizDeps struct {
+	ParseCommandCalled bool
+	GetQuestionsCalled bool
+	PlayCalled         bool
+	ShowHelpCalled     bool
+	ShowResultCalled   bool
 
-func (m *ValidMockQuizDeps) parseCommand() (file string, limit int, help bool, err error) {
-	return file, limit, help, err
+	// Return values for mocked functions
+	FilePath          string
+	TimeLimit         int
+	HelpFlag          bool
+	ParseCommandError error
+	Questions         []Question
+	GetQuestionsError error
+	Result            Result
+	PlayError         error
 }
 
-func (m *ValidMockQuizDeps) getQuestions(filepath string) ([]Question, error) {
-	if filepath == "invalid" {
-		return []Question{}, nil
-	}
-
-	return []Question{
-		{question: "7+3", answer: "10"},
-		{question: "4+4", answer: "8"},
-		{question: "1+3", answer: "5"},
-		{question: "2+4", answer: "6"},
-		{question: "4+67", answer: "71"},
-		{question: "2+34", answer: "36"},
-		{question: "13+3", answer: "16"},
-		{question: "12+4", answer: "16"},
-		{question: "8+3", answer: "12"},
-		{question: "24+4", answer: "29"},
-		{question: "2+43", answer: "45"},
-		{question: "23+4", answer: "27"},
-	}, nil
+func (m *MockQuizDeps) parseCommand() (string, int, bool, error) {
+	m.ParseCommandCalled = true
+	return m.FilePath, m.TimeLimit, m.HelpFlag, m.ParseCommandError
 }
 
-func (m *ValidMockQuizDeps) play(q []Question, limit int) (Result, error) {
-	return Result{
-		correct:   5,
-		attempted: 13,
-	}, nil
+func (m *MockQuizDeps) getQuestions(filepath string) ([]Question, error) {
+	m.GetQuestionsCalled = true
+	return m.Questions, m.GetQuestionsError
 }
 
-func (m *ValidMockQuizDeps) showResult(r Result) {}
-
-func (m *ValidMockQuizDeps) showHelp() {}
-
-// Invalid mock dependencies
-type InvalidMockQuizDeps struct{}
-
-func (m *InvalidMockQuizDeps) parseCommand() (file string, limit int, help bool, err error) {
-	return file, limit, help, err
+func (m *MockQuizDeps) play(q []Question, limit int) (Result, error) {
+	m.PlayCalled = true
+	return m.Result, m.PlayError
 }
 
-func (m *InvalidMockQuizDeps) getQuestions(filepath string) ([]Question, error) {
-	if filepath == "invalid" {
-		return []Question{}, nil
-	}
-
-	return []Question{}, nil
+func (m *MockQuizDeps) showResult(r Result) {
+	m.ShowResultCalled = true
 }
 
-func (m *InvalidMockQuizDeps) play(q []Question, limit int) (Result, error) {
-	return Result{
-		correct:   0,
-		attempted: 0,
-	}, nil
+func (m *MockQuizDeps) showHelp() {
+	m.ShowHelpCalled = true
 }
 
-func (m *InvalidMockQuizDeps) showResult(r Result) {}
-
-func (m *InvalidMockQuizDeps) showHelp() {}
-
-func TestQuiz(t *testing.T) {
-	testcases := []struct {
-		name              string
-		deps              QuizDependencies
-		expectedCorrect   int
-		expectedAttempted int
-	}{
-		{
-			name:              "Valid Quiz",
-			deps:              &ValidMockQuizDeps{},
-			expectedCorrect:   5,
-			expectedAttempted: 13,
+func TestQuizNormalFlow(t *testing.T) {
+	// Setup mock with expected values
+	mockDeps := &MockQuizDeps{
+		FilePath:  "test.csv",
+		TimeLimit: 30,
+		HelpFlag:  false,
+		Questions: []Question{
+			{id: 1, question: "1+1?", answer: "2"},
+			{id: 2, question: "2+2?", answer: "4"},
 		},
-		{
-			name:              "Invalid Quiz",
-			deps:              &ValidMockQuizDeps{},
-			expectedCorrect:   0,
-			expectedAttempted: 0,
+		Result: Result{
+			totalQuestions: 2,
+			correct:        1,
+			attempted:      2,
 		},
 	}
 
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
+	// Create quiz with mock dependencies
+	quiz := NewQuiz(mockDeps)
 
-			questions, err := tc.deps.getQuestions("filepath")
+	// Run the quiz
+	StartQuiz(quiz)
 
-			if err != nil {
-				log.Fatalf("\nCouldn't fetch the questions : %v\n", err)
-			}
+	// Verify all expected functions were called
+	if !mockDeps.ParseCommandCalled {
+		t.Error("parseCommand was not called")
+	}
+	if !mockDeps.GetQuestionsCalled {
+		t.Error("getQuestions was not called")
+	}
+	if !mockDeps.PlayCalled {
+		t.Error("play was not called")
+	}
+	if !mockDeps.ShowResultCalled {
+		t.Error("showResult was not called")
+	}
+	if mockDeps.ShowHelpCalled {
+		t.Error("showHelp was called unexpectedly")
+	}
+}
 
-			res, err := tc.deps.play(questions, 1)
+func TestQuizHelpFlow(t *testing.T) {
+	// Setup mock with help flag set to true
+	mockDeps := &MockQuizDeps{
+		FilePath:  "test.csv",
+		TimeLimit: 30,
+		HelpFlag:  true,
+	}
 
-			if err != nil {
-				log.Fatalf("\nCouldn't fetch the result : %v\n", err)
-			}
+	// Create quiz with mock dependencies
+	quiz := NewQuiz(mockDeps)
 
-			tc.deps.showResult(res)
+	// Run the quiz
+	StartQuiz(quiz)
 
-			q := NewQuiz(tc.deps)
-			StartQuiz(q)
-
-		})
+	// Verify only parseCommand and showHelp were called
+	if !mockDeps.ParseCommandCalled {
+		t.Error("parseCommand was not called")
+	}
+	if !mockDeps.ShowHelpCalled {
+		t.Error("showHelp was not called")
+	}
+	if mockDeps.GetQuestionsCalled {
+		t.Error("getQuestions was called unexpectedly")
+	}
+	if mockDeps.PlayCalled {
+		t.Error("play was called unexpectedly")
+	}
+	if mockDeps.ShowResultCalled {
+		t.Error("showResult was called unexpectedly")
 	}
 }
