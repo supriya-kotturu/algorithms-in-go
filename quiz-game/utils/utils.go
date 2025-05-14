@@ -22,7 +22,7 @@ type Result struct {
 	attempted      int
 }
 
-func ShowHelp() {
+func showHelp() {
 	fmt.Println("--- QUIZ GAME HELP ---")
 	fmt.Println("This program runs a quiz using questions from a CSV file.")
 	fmt.Println("\nOptions:")
@@ -34,7 +34,7 @@ func ShowHelp() {
 	fmt.Println("  quiz-game -file=my-questions.csv")
 }
 
-func ParseCommand() (string, int, bool, error) {
+func parseCommand() (string, int, bool, error) {
 	file := flag.String("file", "problem-set.csv", "The file path to the question bank in csv format of (question, answer).")
 	limit := flag.Int("limit", 30, "The time limit in seconds to solve each question.")
 	help := flag.Bool("help", false, "Shows the instructions to start the quiz.")
@@ -54,7 +54,7 @@ func ParseCommand() (string, int, bool, error) {
 	}
 }
 
-func GetQuestions(filePath string) ([]Question, error) {
+func getQuestions(filePath string) ([]Question, error) {
 	file, err := os.Open(filePath)
 
 	if err != nil {
@@ -82,7 +82,7 @@ func GetQuestions(filePath string) ([]Question, error) {
 	return questions, nil
 }
 
-func Play(questions []Question, limit int) (Result, error) {
+func play(questions []Question, limit int) (Result, error) {
 	var result Result
 
 	result.totalQuestions = len(questions)
@@ -116,7 +116,7 @@ func Play(questions []Question, limit int) (Result, error) {
 	return result, nil
 }
 
-func ShowResult(r Result) {
+func showResult(r Result) {
 	fmt.Println("--- RESULT ---")
 	fmt.Printf("You attempted %d out of %d\n", r.attempted, r.totalQuestions)
 	fmt.Printf("Your score : %d / %d\n", r.correct, r.totalQuestions)
