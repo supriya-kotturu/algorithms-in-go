@@ -1,7 +1,6 @@
 package redirect
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -12,24 +11,16 @@ import (
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-	var handler http.HandlerFunc
+	return func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
 
-	for path, url := range pathsToUrls {
-		fmt.Println(path, url)
-		handler = func(w http.ResponseWriter, r *http.Request) {
-
-			resp := fmt.Sprintf("current path : %s", path)
-			w.Write([]byte(resp))
-
-			if redirectURL, ok := pathsToUrls[r.URL.Path]; ok {
-				http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
-			} else {
-				fallback.ServeHTTP(w, r)
-			}
+		if dest, ok := pathsToUrls[path]; ok {
+			http.Redirect(w, r, dest, http.StatusFound)
+			return
 		}
-	}
 
-	return handler
+		fallback.ServeHTTP(w, r)
+	}
 }
 
 // YAMLHandler will parse the provided YAML and then return

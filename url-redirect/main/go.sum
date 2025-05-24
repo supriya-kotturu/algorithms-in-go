@@ -1,2 +1,4 @@
 github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect v0.0.0-20250522192644-79e28f43a599 h1:K83+EJpluhqe9FkaI6sRqKeDWFsXvyWYkM2Nf1dLrP0=
 github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect v0.0.0-20250522192644-79e28f43a599/go.mod h1:7lofYQq8ofxmixVTXqpSL8XkreD2LWfQ3mcKNjZhJLk=
+github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect v0.0.0-20250522200954-c5ef0c2f0ebe h1:VtVabuAqyzrqZnkBbrmWWsuhd0Lv8uU6EvEdpHW+7Lc=
+github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect v0.0.0-20250522200954-c5ef0c2f0ebe/go.mod h1:7lofYQq8ofxmixVTXqpSL8XkreD2LWfQ3mcKNjZhJLk=
