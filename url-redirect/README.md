@@ -60,10 +60,14 @@ This project uses Go modules to manage dependencies and package organization. We
    go mod init github.com/supriya-kotturu/algorithms-in-go/url-redirect/main
    ```
 
+## Go Topics
+
+See [GO-NOTES.md](./GO-NOTES.md) for a detailed list of Go concepts demonstrated in this project.
+
 ## Running the Application
 
 ```bash
-go run main.go
+go run . -yaml ../data/map.yaml -json ../data/map.json
 ```
 
 Then visit:
