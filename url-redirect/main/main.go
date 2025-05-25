@@ -1,23 +1,33 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect"
 )
 
 func main() {
-	routeMap := make(map[string]string)
+	port := 8080
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", defaultHandler)
+	mux.HandleFunc("/404", errorHandler)
 
-	routeMap["/google"] = "https://google.com"
-	routeMap["/ddg"] = "https://duckduckgo.com"
+	routeMap := map[string]string{
+		"/google": "https://google.com",
+		"/ddg":    "https://duckduckgo.com",
+	}
 
-	fallbackHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Not found!"))
-	})
+	middleware := redirect.MapHandler(routeMap, mux)
 
-	// mux := http.NewServeMux()
-	handler := redirect.MapHandler(routeMap, fallbackHandler)
+	fmt.Printf("Running server on port : %d\n", port)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), middleware)
+}
 
-	http.ListenAndServe(":8080", handler)
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hello, world!")
+}
+
+func errorHandler(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "test error message. try again", 400)
 }
