@@ -200,6 +200,10 @@ type Result struct {
 }
 ```
 
+## Go Topics
+
+See [GO-NOTES.md](./GO-NOTES.md) for a detailed list of Go concepts demonstrated in this project.
+
 ## References
 
 ### Dependency Injection
