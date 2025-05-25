@@ -8,13 +8,21 @@ This project demonstrates Go module organization with multiple packages:
 
 ```bash
 url-redirect/
-├── go.mod                 # Main module definition
-├── main.go                # Entry point application
+├── data/                  # Configuration files
+│   ├── map.json           # JSON path mappings
+│   └── map.yml            # YAML path mappings
 ├── main/                  # Executable package
-│   └── go.mod             # Module for main package
+│   ├── go.mod             # Module for main package
+│   ├── main.go            # Entry point application
+│   └── utils.go           # Command-line parsing utilities
 ├── redirect/              # Package for redirection logic
 │   ├── go.mod             # Module for redirect package
-│   └── redirect.go        # Redirection handlers
+│   ├── json.go            # JSON handler implementation
+│   ├── map.go             # Map handler implementation
+│   ├── redirect.go        # Core redirection functionality
+│   └── yaml.go            # YAML handler implementation
+├── go.mod                 # Main module definition
+├── GO-NOTES.md            # Go concepts demonstrated in this project
 ├── ISSUES.md              # Common issues and solutions
 └── README.md              # This file
 ```
@@ -72,7 +80,7 @@ go run . -yaml ../data/map.yaml -json ../data/map.json
 
 Then visit:
 
-- [http://localhost:8080/google](http://localhost:8080/google) - Redirects to Google
+- [http://localhost:8080/google](http://localhost:8080/ggl) - Redirects to Google
 - [http://localhost:8080/ddg](http://localhost:8080/ddg) - Redirects to DuckDuckGo
 - Any other path shows "Hello, world!"
 
