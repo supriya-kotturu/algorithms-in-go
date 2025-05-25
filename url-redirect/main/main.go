@@ -4,31 +4,32 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/supriya-kotturu/algorithms-in-go/url-redirect/redirect"
 )
 
 func main() {
 	port := 8080
-	shortPathMap := redirect.NewPathMap()
-	jsonFilePath, yamlFilePath, err := parseCommand()
+
+	deps := &DefaultURLRedirectDeps{}
+	u := NewURLRedirect(deps)
+
+	jsonFilePath, yamlFilePath, err := u.deps.parseCommand()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", defaultHandler)
-	mux.HandleFunc("/404", errorHandler)
+	mux.HandleFunc("/", u.deps.defaultHandler)
+	mux.HandleFunc("/404", u.deps.errorHandler)
 
-	middleware := redirect.MapHandler(shortPathMap, mux)
-	middleware, err = redirect.YAMLHandler(shortPathMap, yamlFilePath, middleware)
+	middleware := u.deps.mapMiddleware(u.pathMap, mux)
+	middleware, err = u.deps.yamlMiddleware(u.pathMap, yamlFilePath, middleware)
 
 	if err != nil {
 		log.Println(err)
 	}
 
-	middleware, err = redirect.JSONHandler(shortPathMap, jsonFilePath, middleware)
+	middleware, err = u.deps.jsonMiddleware(u.pathMap, jsonFilePath, middleware)
 
 	if err != nil {
 		log.Fatal(err)
@@ -36,12 +37,4 @@ func main() {
 
 	fmt.Printf("Running server on port : %d\n", port)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), middleware)
-}
-
-func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
-}
-
-func errorHandler(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "test error message. try again", 400)
 }

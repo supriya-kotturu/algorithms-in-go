@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
+	"net/http"
 	"os"
 )
 
@@ -31,4 +33,12 @@ func parseCommand() (string, string, error) {
 	} else {
 		return "", "", errors.New("cannot find the files")
 	}
+}
+
+func defaultHandler(w http.ResponseWriter, _ *http.Request) {
+	fmt.Fprintln(w, "Hello, world!")
+}
+
+func errorHandler(w http.ResponseWriter, _ *http.Request) {
+	http.Error(w, "test error message. try again", 400)
 }
