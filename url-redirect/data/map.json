@@ -1,4 +1,5 @@
 [
     {"path": "/ddg", "url":"https://www.duckduckgo.com/"},
-    {"path": "/ggl", "url":"https://www.google.com/"}
+    {"path": "/ggl", "url":"https://www.google.com/"},
+    {"path": "/yhs", "url":"https://www.yahoo.com"}
 ]
