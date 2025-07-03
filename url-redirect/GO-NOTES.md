@@ -10,6 +10,43 @@ This project demonstrates the following Go concepts:
 - `http.ListenAndServe()` function for starting HTTP servers
 - Request and response handling with `http.ResponseWriter` and `*http.Request`
 
+#### HTTP Request Flow
+
+```go
+HTTP Request
+    │
+    ▼
+http.ListenAndServe(":8080", middleware)
+    │
+    ▼
+middleware = redirect.JSONHandler(shortPathMap, jsonFilePath, middleware)
+    │
+    ├─── Is path in JSON map? ───Yes──► http.Redirect() ───► HTTP Redirect Response
+    │                                                           (e.g., /github → https://github.com)
+    │ No
+    ▼
+middleware = redirect.YAMLHandler(shortPathMap, yamlFilePath, middleware)
+    │
+    ├─── Is path in YAML map? ───Yes──► http.Redirect() ───► HTTP Redirect Response
+    │                                                           (e.g., /yaml → https://yaml.org)
+    │ No
+    ▼
+middleware = redirect.MapHandler(shortPathMap, mux)
+    │
+    ├─── Is path in routeMap? ───Yes──► http.Redirect() ───► HTTP Redirect Response
+    │                                                           (e.g., /google → https://google.com)
+    │ No
+    ▼
+mux.ServeHTTP(w, r)  [fallback handler]
+    │
+    ├─── Path = "/" ───► defaultHandler() ───► "Hello, world!" Response
+    │
+    ├─── Path = "/404" ───► errorHandler() ───► Error Response (400)
+    │
+    └─── No match ───► defaultHandler() ───► "Hello, world!" Response
+                        (ServeMux routes unmatched paths to "/" handler)
+```
+
 ### Routing and Multiplexing
 
 - `http.ServeMux` for request routing/multiplexing
